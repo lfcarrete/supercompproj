@@ -24,6 +24,8 @@ int main(){
     vector<ponto> pontos;
     vector<ponto> pontosOrdenados;
     cin >> numLines;
+    int numCidades = numLines;
+    double distTotal = 0;
 
     for(int i = 0; i < numLines; i++) {
         ponto novoItem;
@@ -34,22 +36,13 @@ int main(){
         novoItem.y = stof(line);
         pontos.push_back(novoItem);
     }
+
     ponto pontoAtual = pontos[0];
     int index = 0;
-    double distanciaMinima = sqrt(pow(pontos[0].x, 2) + pow(pontos[0].y, 2));
-    for(int i = 1; i < numLines; i++) {
-        double dist = sqrt(pow(pontos[0].x, 2) + pow(pontos[0].y, 2));
-        if(dist < distanciaMinima) {
-            distanciaMinima = dist;
-            index = i;
-            pontoAtual = pontos[i];
-        }
-    }
-    
-    pontos.erase(pontos.begin()+index);
+    pontos.erase(pontos.begin()+0);
     numLines --;
     pontosOrdenados.push_back(pontoAtual); 
-
+    
     while(numLines > 0){
         pontoAtual = pontos[0];
         index = 0;
@@ -66,7 +59,14 @@ int main(){
         numLines --;
         pontosOrdenados.push_back(pontoAtual); 
     }
-    for(int i = 0; i < pontosOrdenados.size(); i++){
-            cout << pontosOrdenados[i].id << endl;
+    distTotal += calcDist(pontosOrdenados.back(), pontosOrdenados[0]);
+    
+    for(int i = 0; i < numCidades - 1 ; i++){
+        distTotal += calcDist(pontosOrdenados[i], pontosOrdenados[i+1]);
     }
+    cout << distTotal << " 0" << endl;
+    for(int i = 0; i < numCidades; i++){
+        cout << pontosOrdenados[i].id << " ";
+    }
+    cout << endl;
 }
