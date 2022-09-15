@@ -70,10 +70,13 @@ int main(){
          
         vector<ponto> permutacao;
 
-        for(int swapLocal = 0; swapLocal < numCidades-1; swapLocal++){
-            //cout << " | "; 
+        for(int swapLocal = 0; swapLocal < numCidades; swapLocal++){
             permutacao = pontosShuffled;
-            swap(permutacao[swapLocal], permutacao[swapLocal+1]);
+            if(swapLocal < numCidades-1){
+                swap(permutacao[swapLocal], permutacao[swapLocal+1]);
+            } else {
+                swap(permutacao.back(), permutacao[0]);
+            }
 
             double distLocal = 0;
 
@@ -82,17 +85,18 @@ int main(){
                 distLocal += calcDist(permutacao[pont], permutacao[pont+1]);
             }
 
-            // cout << distMin << " 0 : ";
-            // for(int e = 0; e < numCidades; e++){
-            //     cout << permutacao[e].id << " ";
-            // }
+            cerr << "local: " << distLocal << " " ;
+            for(int e = 0; e < numCidades; e++){
+                cerr << permutacao[e].id << " ";
+            }  
+            cerr << endl;
 
             if(distLocal < distMin){
                 distMin = distLocal;
                 pontosShuffled = permutacao;
             }
         }
-
+ 
         if(distMin < distMinGlobal){
             distMinGlobal = distMin;
             pontosMinGlobal = pontosShuffled;
@@ -101,5 +105,6 @@ int main(){
     cout << distMinGlobal << " 0" << endl;
     for(int i = 0; i < numCidades; i++){
         cout << pontosMinGlobal[i].id << " ";
-    }    
+    }  
+    cout << endl;  
 }
