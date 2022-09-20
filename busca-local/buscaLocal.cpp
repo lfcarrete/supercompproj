@@ -47,7 +47,7 @@ int main(){
     double distMinGlobal = 100000000000;
     vector<ponto> pontosMinGlobal;
 
-    for(int rounds = 0; rounds < 10; rounds ++){
+    for(int rounds = 0; rounds < 10*numCidades; rounds ++){
         double distMin = 0;
         vector<ponto> pontosShuffled;
         while(numLines > 0){
@@ -85,17 +85,18 @@ int main(){
                 distLocal += calcDist(permutacao[pont], permutacao[pont+1]);
             }
 
-            cerr << "local: " << distLocal << " " ;
-            for(int e = 0; e < numCidades; e++){
-                cerr << permutacao[e].id << " ";
-            }  
-            cerr << endl;
-
             if(distLocal < distMin){
                 distMin = distLocal;
                 pontosShuffled = permutacao;
             }
         }
+
+        cerr << "local: " << distMin << " " ;
+        for(int e = 0; e < numCidades; e++){
+            cerr << pontosShuffled[e].id << " ";
+        }  
+        cerr << endl;
+
  
         if(distMin < distMinGlobal){
             distMinGlobal = distMin;
