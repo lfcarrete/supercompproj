@@ -76,7 +76,7 @@ int main(){
 
     vector<ponto> pontos = read_file(numLines);
     vector<ponto> listaLocal;
-    int numFolhas = 0;
+    long int numFolhas = 0;
 
     listaLocal.push_back(pontos[0]);
     pontos.erase(pontos.begin()+0);
