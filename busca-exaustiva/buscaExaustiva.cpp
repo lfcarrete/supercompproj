@@ -38,7 +38,7 @@ vector<ponto> read_file(int numLines) {
 }
 
 
-int buscaExaustiva(vector<ponto> pontosRestantes ,vector<ponto> pontos, int numCidades) {
+long long int buscaExaustiva(vector<ponto> pontosRestantes ,vector<ponto> pontos, int numCidades) {
     if(pontosRestantes.size() == 0) {
         pontos.push_back(pontos[0]);
         double distLocal = 0;
@@ -56,8 +56,8 @@ int buscaExaustiva(vector<ponto> pontosRestantes ,vector<ponto> pontos, int numC
     vector<ponto> pontosTemp;
     permutacao = pontos;
     pontosTemp = pontosRestantes;
-    int numFolhasLevel = 0;
-    for(int i = 0; i < pontosRestantes.size(); i++){
+    long long int numFolhasLevel = 0;
+    for(long unsigned int i = 0; i < pontosRestantes.size(); i++){
         permutacao.push_back(pontosRestantes[i]);
         pontosTemp.erase(pontosTemp.begin()+i);
 
@@ -76,7 +76,7 @@ int main(){
 
     vector<ponto> pontos = read_file(numLines);
     vector<ponto> listaLocal;
-    long int numFolhas = 0;
+    long long int numFolhas = 0;
 
     listaLocal.push_back(pontos[0]);
     pontos.erase(pontos.begin()+0);
