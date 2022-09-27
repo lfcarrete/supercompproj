@@ -38,7 +38,7 @@ vector<ponto> read_file(int numLines) {
 }
 
 
-void buscaExaustiva(vector<ponto> pontosRestantes ,vector<ponto> pontos, int numCidades) {
+int buscaExaustiva(vector<ponto> pontosRestantes ,vector<ponto> pontos, int numCidades) {
     if(pontosRestantes.size() == 0) {
         pontos.push_back(pontos[0]);
         double distLocal = 0;
@@ -49,23 +49,25 @@ void buscaExaustiva(vector<ponto> pontosRestantes ,vector<ponto> pontos, int num
             distMin = distLocal;
             melhorGlobal = pontos;
         }
-        return;
+        
+        return 1;
     }
     vector<ponto> permutacao;
     vector<ponto> pontosTemp;
     permutacao = pontos;
     pontosTemp = pontosRestantes;
+    int numFolhasLevel = 0;
     for(int i = 0; i < pontosRestantes.size(); i++){
         permutacao.push_back(pontosRestantes[i]);
         pontosTemp.erase(pontosTemp.begin()+i);
 
-        buscaExaustiva(pontosTemp, permutacao, numCidades);
+        numFolhasLevel += buscaExaustiva(pontosTemp, permutacao, numCidades);
 
         pontosTemp = pontosRestantes;
         permutacao = pontos;
     }
 
-    return;
+    return numFolhasLevel;
 }
 
 int main(){
@@ -74,12 +76,19 @@ int main(){
 
     vector<ponto> pontos = read_file(numLines);
     vector<ponto> listaLocal;
-    buscaExaustiva(pontos, listaLocal, numLines);
+    int numFolhas = 0;
+
+    listaLocal.push_back(pontos[0]);
+    pontos.erase(pontos.begin()+0);
+
+    numFolhas = buscaExaustiva(pontos, listaLocal, numLines);
     
+    cerr << "num_leaf " << numFolhas << endl;
+
     cout << distMin << " 1" << endl;
     for(int i = 0; i < numLines; i++){
         cout << melhorGlobal[i].id << " ";
-    }  
+    } 
     cout << endl;  
 
-}
+} 
