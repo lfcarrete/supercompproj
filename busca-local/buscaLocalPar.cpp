@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <omp.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -13,12 +15,6 @@ struct ponto
     int id;
     double x;
     double y;
-};
-
-struct bestList
-{
-    double distMinGlobal;
-    vector<ponto> pontosMinGlobal;
 };
 
 double calcDist(ponto a, ponto b) {
@@ -40,19 +36,28 @@ vector<ponto> read_file(int numLines) {
     return pontos;
 }
 
-void calculaBuscaLocal(int numLines, default_random_engine generator, vector<ponto> pontos, bestList best_list){
-        int numCidades = numLines;
-        int counter = numLines;
+int main(){
+    int numLines;
+    int seed = 10;
+    cin >> numLines;
+    int numCidades = numLines;
+
+    vector<ponto> pontos = read_file(numLines);
+
+    default_random_engine generator(seed);
+
+    double distMinGlobal = 100000000000;
+    vector<ponto> pontosMinGlobal;
+    
+    for(int rounds = 0; rounds < 10*numCidades; rounds ++){
         double distMin = 0;
-
         vector<ponto> pontosShuffled;
-
-        while(counter > 0){
-            uniform_int_distribution<int> distribution(0,counter-1);
+        while(numLines > 0){
+            uniform_int_distribution<int> distribution(0,numLines-1);
             int posOut = distribution(generator);
             pontosShuffled.push_back(pontos[posOut]);
             pontos.erase(pontos.begin()+posOut);
-            counter -= 1;
+            numLines -= 1;
         }
 
         distMin += calcDist(pontosShuffled.back(), pontosShuffled[0]);
@@ -63,8 +68,8 @@ void calculaBuscaLocal(int numLines, default_random_engine generator, vector<pon
         for(int i = 0; i < numCidades; i++){
             pontos.push_back(pontosShuffled[i]);
         }
-        counter = numCidades;
-         
+        numLines = numCidades;
+        
         vector<ponto> permutacao;
 
         for(int swapLocal = 0; swapLocal < numCidades; swapLocal++){
@@ -86,6 +91,7 @@ void calculaBuscaLocal(int numLines, default_random_engine generator, vector<pon
                 distMin = distLocal;
                 pontosShuffled = permutacao;
             }
+            
         }
 
         cerr << "local: " << distMin << " " ;
@@ -94,36 +100,16 @@ void calculaBuscaLocal(int numLines, default_random_engine generator, vector<pon
         }  
         cerr << endl;
 
-        #pragma omp critical
-        {
-            if(distMin < best_list.distMinGlobal){
-                best_list.distMinGlobal = distMin;
-                best_list.pontosMinGlobal = pontosShuffled;
-            }  
-        }  
-}
 
-int main(){
-    int numLines;
-    int seed = 10;
-    cin >> numLines;
-
-    vector<ponto> pontos = read_file(numLines);
-
-    default_random_engine generator(seed);
-
-    bestList best_list;
-    best_list.distMinGlobal = 100000000000;
-
-    for(int rounds = 0; rounds < 10*numLines; rounds ++){
-        #pragma omp parallel 
-        {
-            calculaBuscaLocal(numLines, generator, pontos, best_list);
-        }
+        if(distMin < distMinGlobal){
+            distMinGlobal = distMin;
+            pontosMinGlobal = pontosShuffled;
+        }    
     }
-    cout << best_list.distMinGlobal << " 0" << endl;
-    for(int i = 0; i < numLines; i++){
-        cout << best_list.pontosMinGlobal[i].id << " ";
+    
+    cout << distMinGlobal << " 0" << endl;
+    for(int i = 0; i < numCidades; i++){
+        cout << pontosMinGlobal[i].id << " ";
     }  
     cout << endl;  
 }
