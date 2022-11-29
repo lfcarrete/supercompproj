@@ -136,7 +136,6 @@ int main(){
         for(int i = 0; i < numLines; i++){
             int index = (i * numLines) + j;
             todasDist[index] = calcDist(pontos[j], pontos[i]);
-            //cout << todasDist[index];
         }
     }
 
@@ -168,15 +167,22 @@ int main(){
         saxpy(thrust::raw_pointer_cast(todasPermGPU.data()), thrust::raw_pointer_cast(todasDistGPU.data()), numLines)
     ); 
     
-    cout << result.size() << endl;
-    for(int rounds = 0; rounds < 10*numLines; rounds ++){
-        for(int i = 0; i < numLines; i++){
-            int index = (rounds * numLines) + i;
-            cout << todasPermGPU[index] << " ";
+    int bestIndex = 0;
+    float bestDist = result[0];
+    for(int rounds = 1; rounds < 10*numLines; rounds ++){
+        if(result[rounds] < bestDist){
+            bestDist = result[rounds];
+            bestIndex = rounds;
         }
-        cout << " : "<< result[rounds];
-        cout << endl;
+        result[rounds]; 
     }
+    cout << bestDist << " 0" << endl;
+    for(int i = 0; i < numLines; i++){
+        int index = (bestIndex * numLines) + i;
+        cout << todasPermGPU[index] << " ";
+    }
+
     return 0; 
 }
+
 
