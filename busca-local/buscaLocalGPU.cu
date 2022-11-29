@@ -8,6 +8,8 @@
 #include <thrust/host_vector.h>
 #include <random>
 #include <algorithm>
+#include <thrust/reduce.h>
+#include <thrust/functional.h>
 
 using namespace std;
 
@@ -166,21 +168,26 @@ int main(){
         result.begin(), 
         saxpy(thrust::raw_pointer_cast(todasPermGPU.data()), thrust::raw_pointer_cast(todasDistGPU.data()), numLines)
     ); 
-    
-    int bestIndex = 0;
+
+
     float bestDist = result[0];
-    for(int rounds = 1; rounds < 10*numLines; rounds ++){
-        if(result[rounds] < bestDist){
-            bestDist = result[rounds];
-            bestIndex = rounds;
-        }
-        result[rounds]; 
-    }
-    cout << bestDist << " 0" << endl;
-    for(int i = 0; i < numLines; i++){
-        int index = (bestIndex * numLines) + i;
-        cout << todasPermGPU[index] << " ";
-    }
+
+    float res = thrust::reduce(result.begin(), result.end(),bestDist, thrust::minimum<float>());
+
+    cout << res << endl;
+
+    // for(int rounds = 1; rounds < 10*numLines; rounds ++){
+    //     if(result[rounds] < bestDist){
+    //         bestDist = result[rounds];
+    //         bestIndex = rounds;
+    //     }
+    //     result[rounds]; 
+    // }
+    // cout << bestDist << " 0" << endl;
+    // for(int i = 0; i < numLines; i++){
+    //     int index = (bestIndex * numLines) + i;
+    //     cout << todasPermGPU[index] << " ";
+    // }
 
     return 0; 
 }
